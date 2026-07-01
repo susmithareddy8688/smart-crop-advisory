@@ -10,7 +10,7 @@ CORS(app)
 # ==========================================
 # CONFIGURATION SETTINGS
 # ==========================================
-OPENWEATHER_API_KEY = "YOUR_OPENWEATHERMAP_API_KEY" 
+OPENWEATHER_API_KEY = "aa0b2b8f1bbe92442b826dfc6841125b" 
 
 DISEASE_REMEDIATION_DB = {
     "potato_early_blight": {
