@@ -310,7 +310,8 @@
                 class="mt-8 bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700">
 
                     Predict Crop
-
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
                 </button>
 
                 <div
@@ -574,3 +575,23 @@
 
                     <div class="bg-yellow-100 border-l-4 border-yellow-500 p-5 rounded">
         
+               <div class="bg-white p-4 rounded-xl shadow mt-5">
+    <h3 class="font-bold mb-3">NDVI Index</h3>
+    <div style="height:300px;">
+        <canvas id="ndviChart"></canvas>
+    </div>
+</div>
+
+<div class="bg-white p-4 rounded-xl shadow mt-5">
+    <h3 class="font-bold mb-3">Soil Moisture</h3>
+    <div style="height:300px;">
+        <canvas id="moistureChart"></canvas>
+    </div>
+</div>
+
+<div class="bg-white p-4 rounded-xl shadow mt-5">
+    <h3 class="font-bold mb-3">Weekly Weather</h3>
+    <div style="height:300px;">
+        <canvas id="weatherChart"></canvas>
+    </div>
+</div>
