@@ -193,3 +193,109 @@ setInterval(loadWeather, 60000);
 // Refresh alerts every two minutes
 
 setInterval(loadAlerts, 120000);
+
+
+// ==========================
+// Dashboard Data
+// ==========================
+
+async function loadDashboard() {
+
+    const response = await fetch("/api/dashboard");
+    const data = await response.json();
+
+    document.getElementById("dash-text-temp").innerText =
+        data.temperature + "°C";
+
+    document.getElementById("dash-text-humidity").innerText =
+        data.humidity + "%";
+
+    document.getElementById("dash-text-ndvi").innerText =
+        data.ndvi;
+
+    document.getElementById("dash-text-moisture").innerText =
+        data.soil_moisture + "%";
+}
+
+// ==========================
+// Crop Recommendation
+// ==========================
+
+async function requestCropPrediction() {
+
+    const nitrogen = document.getElementById("form-n").value;
+    const phosphorus = document.getElementById("form-p").value;
+
+    const response = await fetch("/api/crop-recommend", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            nitrogen: nitrogen,
+            phosphorus: phosphorus
+
+        })
+
+    });
+
+    const data = await response.json();
+
+    document.getElementById("predictionResultBox")
+        .classList.remove("hidden");
+
+    document.getElementById("predictionOutputLabel")
+        .innerText = data.recommended_crop;
+}
+
+// ==========================
+// Disease Detection
+// ==========================
+
+async function uploadAndAnalyzeLeaf() {
+
+    const response = await fetch("/api/disease-detect", {
+
+        method: "POST"
+
+    });
+
+    const data = await response.json();
+
+    document.getElementById("inferenceResultsBox")
+        .classList.remove("hidden");
+
+    document.getElementById("lbl-detected-disease")
+        .innerText = data.detected_disease;
+
+    document.getElementById("lbl-confidence")
+        .innerText = data.confidence;
+
+    document.getElementById("lbl-recommended-pesticide")
+        .innerText = data.recommended_pesticide;
+
+    const tips = document.getElementById("list-prevention-tips");
+
+    tips.innerHTML = "";
+
+    data.prevention_tips.forEach(tip => {
+
+        const li = document.createElement("li");
+        li.innerText = tip;
+        tips.appendChild(li);
+
+    });
+
+}
+
+// ==========================
+// Auto Refresh Dashboard
+// ==========================
+
+loadDashboard();
+
+setInterval(loadDashboard,5000);
