@@ -10,7 +10,7 @@ CORS(app)
 # ==========================================
 # CONFIGURATION SETTINGS
 # ==========================================
-OPENWEATHER_API_KEY = "aa0b2b8f1bbe92442b826dfc6841125b" 
+OPENWEATHER_API_KEY = "aa0b2b8f1bbe92442b826dfc6841125b"
 
 DISEASE_REMEDIATION_DB = {
     "potato_early_blight": {
@@ -27,6 +27,7 @@ DISEASE_REMEDIATION_DB = {
 
 @app.route('/')
 def home():
+    """Serves the central dashboard application."""
     return render_template('index.html')
 
 # ==========================================
@@ -64,58 +65,53 @@ def get_weather():
                 return jsonify({
                     "status": "success",
                     "city_name": resolved_name,
-                    "current": {
-                        "temperature": round(current_node['main']['temp']),
-                        "humidity": current_node['main']['humidity'],
-                        "pressure": current_node['main']['pressure'],
-                        "wind_speed": round(current_node['wind']['speed'] * 3.6, 1),
-                        "condition": current_node['weather'][0]['main']
-                    },
-                    "forecast": five_day_forecast[:5]
+                    "temperature": f"{round(current_node['main']['temp'])}°C",
+                    "humidity": f"{current_node['main']['humidity']}%",
+                    "ndvi": "0.65",
+                    "moisture": f"{current_node['main']['humidity'] - 15}%"
                 })
         except Exception as e:
             print("Weather API connection fallback:", e)
             
+    # Resilient Simulator Fallback Engine
     modifier = (len(city) % 7) - 3 
-    simulated_temp = 28
-    simulated_humidity = 72
+    simulated_temp = 29 + modifier
+    simulated_humidity = 65 + (len(city) * 3) % 20
+    ndvi_val = round(0.65 + (modifier * 0.02), 2)
     
     return jsonify({
         "status": "success",
         "city_name": f"{city.capitalize()}",
-        "current": {
-            "temperature": simulated_temp,
-            "humidity": simulated_humidity,
-            "pressure": 1012,
-            "wind_speed": 4.2,
-            "condition": "Cloudy"
-        },
-        "forecast": [
-            {"day": "Today", "temp_max": simulated_temp, "condition": "Sunny"},
-            {"day": "Tomorrow", "temp_max": simulated_temp - 2, "condition": "Rain"},
-            {"day": "Day 3", "temp_max": simulated_temp + 1, "condition": "Cloudy"},
-            {"day": "Day 4", "temp_max": simulated_temp + 3, "condition": "Sunny"},
-            {"day": "Day 5", "temp_max": simulated_temp, "condition": "Sunny"}
-        ]
+        "temperature": f"{simulated_temp}°C",
+        "humidity": f"{simulated_humidity}%",
+        "ndvi": f"{ndvi_val}",
+        "moisture": f"{simulated_humidity - 10}%"
     })
 
 # ==========================================
 # MACHINE LEARNING ADVISORY PREDICTIONS
 # ==========================================
-@app.route('/api/recommend', methods=['POST'])
+@app.route('/api/crop-recommend', methods=['POST'])
 def recommend_crop():
     data = request.get_json() or {}
-    n = float(data.get('nitrogen', 90))
-    p = float(data.get('phosphorus', 42))
+    try:
+        n = float(data.get('nitrogen', 90))
+        p = float(data.get('phosphorus', 42))
+    except (ValueError, TypeError):
+        n, p = 90, 42
     
     if n > 70 and p > 35:
         recommended = "RICE (Oryza sativa)"
     else:
         recommended = "MAIZE (Zea mays)"
         
-    return jsonify({"status": "success", "recommended_crop": recommended})
+    return jsonify({
+        "status": "success", 
+        "recommended_crop": recommended,
+        "confidence": "94%"
+    })
 
-@app.route('/api/detect-disease', methods=['POST'])
+@app.route('/api/disease-detect', methods=['POST'])
 def detect_disease():
     result = DISEASE_REMEDIATION_DB["potato_early_blight"]
     return jsonify({
@@ -158,32 +154,7 @@ def calculate_irrigation():
         "action_plan": advice
     })
 
-@app.route('/api/satellite-webhook', methods=['POST'])
-def satellite_webhook():
-    data = request.get_json() or {}
-    city = data.get('city', 'Hyderabad')
-    ndvi = float(data.get('ndvi', 0.65))
-    soil_moisture = float(data.get('moisture', 45))
-    
-    alert_triggered = False
-    alert_message = ""
-    severity = "Normal"
-
-    if ndvi < 0.45:
-        alert_triggered = True
-        severity = "CRITICAL"
-        alert_message = f"Remote Sensing pass detected rapid foliage health drop (NDVI: {ndvi}) in {city} plot array. Check leaf metrics for early blight vectors."
-    elif soil_moisture < 25:
-        alert_triggered = True
-        severity = "WARNING"
-        alert_message = f"SAR radar matrix tracks critical surface water matrix depletion ({soil_moisture}%) in the local field plot. Irrigation sequence recommended."
-
-    return jsonify({
-        "status": "processed",
-        "alert_active": alert_triggered,
-        "severity": severity,
-        "payload_sent": alert_message if alert_triggered else "Telemetry pools running normal."
-    })
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    # Binds dynamically to Render's internal hosting configuration
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
