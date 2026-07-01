@@ -5,6 +5,24 @@
 // Replace with your OpenWeatherMap API key
 const WEATHER_API_KEY = "aa0b2b8f1bbe92442b826dfc6841125b";
 
+
+function startVoice(){
+
+const recognition=new webkitSpeechRecognition();
+
+recognition.lang="en-IN";
+
+recognition.start();
+
+recognition.onresult=function(e){
+
+document.getElementById("city").value=e.results[0][0].transcript;
+
+getWeather();
+
+}
+
+}
 // Get user's location
 function getCurrentLocation() {
 
