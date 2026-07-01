@@ -36,61 +36,46 @@ def dashboard_page():
 # ==========================================
 # METEOROLOGICAL MODULE (WEATHER API)
 # ==========================================
-@app.route('/api/weather', methods=['GET'])
-def get_weather():
-    city = request.args.get('city', default='Hyderabad').strip()
-    
-    if OPENWEATHER_API_KEY != "YOUR_OPENWEATHERMAP_API_KEY":
-        try:
-            geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={OPENWEATHER_API_KEY}"
-            geo_res = requests.get(geo_url).json()
-            
-            if geo_res:
-                lat, lon = geo_res[0]['lat'], geo_res[0]['lon']
-                resolved_name = f"{geo_res[0]['name']}, {geo_res[0].get('country', '')}"
-                
-                forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric"
-                f_res = requests.get(forecast_url).json()
-                
-                current_node = f_res['list'][0]
-                five_day_forecast = []
-                
-                for i in range(0, len(f_res['list']), 8):
-                    day_data = f_res['list'][i]
-                    raw_date = day_data['dt_txt'].split(" ")[0]
-                    date_parts = raw_date.split("-")
-                    five_day_forecast.append({
-                        "day": f"{date_parts[2]}/{date_parts[1]}",
-                        "temp_max": round(day_data['main']['temp_max']),
-                        "condition": day_data['weather'][0]['main']
-                    })
-                    
-                return jsonify({
-                    "status": "success",
-                    "city_name": resolved_name,
-                    "temperature": f"{round(current_node['main']['temp'])}°C",
-                    "humidity": f"{current_node['main']['humidity']}%",
-                    "ndvi": "0.65",
-                    "moisture": f"{current_node['main']['humidity'] - 15}%"
-                })
-        except Exception as e:
-            print("Weather API connection fallback:", e)
-            
-    # Resilient Simulator Fallback Engine
-    modifier = (len(city) % 7) - 3 
-    simulated_temp = 29 + modifier
-    simulated_humidity = 65 + (len(city) * 3) % 20
-    ndvi_val = round(0.65 + (modifier * 0.02), 2)
-    
-    return jsonify({
-        "status": "success",
-        "city_name": f"{city.capitalize()}",
-        "temperature": f"{simulated_temp}°C",
-        "humidity": f"{simulated_humidity}%",
-        "ndvi": f"{ndvi_val}",
-        "moisture": f"{simulated_humidity - 10}%"
-    })
+@app.route("/api/weather", methods=["GET"])
+def weather():
 
+    city = request.args.get("city","Hyderabad")
+
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={aa0b2b8f1bbe92442b826dfc6841125b}&units=metric"
+
+    try:
+
+        data = requests.get(url).json()
+
+        return jsonify({
+
+            "temperature": data["main"]["temp"],
+
+            "humidity": data["main"]["humidity"],
+
+            "wind": data["wind"]["speed"],
+
+            "description": data["weather"][0]["description"],
+
+            "city": data["name"]
+
+        })
+
+    except:
+
+        return jsonify({
+
+            "temperature":28,
+
+            "humidity":60,
+
+            "wind":5,
+
+            "description":"Unavailable",
+
+            "city":city
+
+        })
 # ==========================================
 # MACHINE LEARNING ADVISORY PREDICTIONS
 # ==========================================
@@ -168,6 +153,18 @@ def dashboard():
         "humidity": random.randint(60, 90),
         "ndvi": round(random.uniform(0.55, 0.90), 2),
         "soil_moisture": random.randint(30, 70)
+    })
+
+
+@app.route("/api/search-location", methods=["POST"])
+def search_location():
+    data = request.get_json()
+
+    location = data.get("location","Hyderabad")
+
+    return jsonify({
+        "success": True,
+        "location": location.title()
     })
 if __name__ == '__main__':
     # Binds dynamically to Render's internal hosting configuration
