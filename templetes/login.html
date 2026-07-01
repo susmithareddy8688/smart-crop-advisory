@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Smart Crop Advisory Login</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<style>
+body{
+background:linear-gradient(135deg,#16a34a,#15803d,#14532d);
+overflow:hidden;
+}
+
+.glass{
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,.2);
+}
+
+input{
+transition:.3s;
+}
+
+input:focus{
+transform:scale(1.02);
+}
+
+.logo{
+animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+
+0%{transform:translateY(0px);}
+
+50%{transform:translateY(-10px);}
+
+100%{transform:translateY(0px);}
+
+}
+</style>
+
+</head>
+
+<body class="flex items-center justify-center min-h-screen">
+
+<div class="glass w-[380px] rounded-3xl p-10 shadow-2xl text-white">
+
+<div class="text-center">
+
+<i class="fas fa-seedling text-6xl logo"></i>
+
+<h1 class="text-3xl font-bold mt-5">
+Smart Crop Advisory
+</h1>
+
+<p class="text-green-100 mt-2">
+AI Powered Agriculture System
+</p>
+
+</div>
+
+<form id="loginForm" class="mt-10">
+
+<div class="mb-5">
+
+<label class="text-sm">
+Username
+</label>
+
+<input
+type="text"
+id="username"
+class="w-full mt-2 p-3 rounded-xl text-black outline-none"
+placeholder="Enter username"
+required>
+
+</div>
+
+<div class="mb-6">
+
+<label class="text-sm">
+Password
+</label>
+
+<input
+type="password"
+id="password"
+class="w-full mt-2 p-3 rounded-xl text-black outline-none"
+placeholder="Enter password"
+required>
+
+</div>
+
+<button
+type="submit"
+class="w-full bg-white text-green-700 font-bold py-3 rounded-xl hover:bg-green-100 duration-300">
+
+Login
+
+</button>
+
+</form>
+
+<p id="error" class="text-red-300 mt-4 text-center hidden">
+
+Invalid Login
+
+</p>
+
+</div>
+
+<script>
+
+document.getElementById("loginForm").addEventListener("submit",function(e){
+
+e.preventDefault();
+
+let user=document.getElementById("username").value;
+
+let pass=document.getElementById("password").value;
+
+if(user=="admin" && pass=="admin123"){
+
+window.location="/dashboard";
+
+}
+
+else{
+
+document.getElementById("error").classList.remove("hidden");
+
+}
+
+});
+
+</script>
+
+</body>
+
+</html>
