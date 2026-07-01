@@ -30,6 +30,10 @@ def home():
     """Serves the central dashboard application."""
     return render_template('index.html')
 
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
 # ==========================================
 # METEOROLOGICAL MODULE (WEATHER API)
 # ==========================================
