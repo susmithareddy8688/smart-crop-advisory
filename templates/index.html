@@ -494,7 +494,9 @@
                 <h2 class="text-2xl font-bold mb-6">
                     🌤 Live Weather
                 </h2>
-
+           <button onclick="startVoice()">
+                🎤
+            </button>
                 <div class="grid grid-cols-4 gap-6">
 
                     <div class="bg-green-50 rounded-xl p-5">
@@ -603,7 +605,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 <script src="{{ url_for('static', filename='js/weather.js') }}"></script>
-<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+
 
 </body>
 </html>
