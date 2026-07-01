@@ -25,19 +25,16 @@
 
     <aside class="w-72 bg-green-800 text-white flex flex-col">
 
-        <div class="p-6 text-center border-b border-green-700">
-
-            <i class="fas fa-seedling text-5xl mb-3"></i>
-
-            <h2 class="text-2xl font-bold">
-                Smart Crop
-            </h2>
-
-            <p class="text-green-200 text-sm">
-                Advisory System
-            </p>
-
-        </div>
+       <div class="p-4 flex flex-col items-center text-center border-b border-green-700">
+    <!-- Links your newly uploaded image asset -->
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="RADAGROW Logo" class="w-24 h-24 object-contain mb-2">
+    
+    <div>
+        <!-- Your new brand typography -->
+        <h1 class="text-xl font-bold tracking-wide text-white">RADAGROW</h1>
+        <p class="text-[10px] text-green-200 uppercase tracking-tight">Radar-Based Agriculture Innovation</p>
+    </div>
+</div>
 
         <nav class="flex-1 mt-8">
 
