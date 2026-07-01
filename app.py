@@ -27,13 +27,12 @@ DISEASE_REMEDIATION_DB = {
 
 @app.route('/')
 def home():
-    """Serves the central dashboard application."""
-    return render_template('index.html')
-
-@app.route('/login')
-def login():
     return render_template('login.html')
 
+
+@app.route('/dashboard')
+def dashboard_page():
+    return render_template('index.html')
 # ==========================================
 # METEOROLOGICAL MODULE (WEATHER API)
 # ==========================================
